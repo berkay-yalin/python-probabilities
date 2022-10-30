@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "python_probabilities"
+version = "0.1.0"
+authors = [{name="Berkay Yalin", email="berkay.yalin@outlook.com"}]
+description = "Library for accurate statistical calculations in Python"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/berkay-yalin/python_probabilities"
+"Bug Tracker" = "https://github.com/berkay-yalin/python_probabilities/issues"
