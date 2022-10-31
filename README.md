@@ -1,4 +1,4 @@
-# python_probabilities
+# Python Probabilities 🐍
 *Library for accurate statistical calculations using Python.*
 
 - [Installation](#installation)
