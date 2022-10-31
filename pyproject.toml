@@ -4,9 +4,9 @@ build-backend = "hatchling.build"
 
 [project]
 name = "python_probabilities"
-version = "0.1.0"
+version = "0.1.1"
 authors = [{name="Berkay Yalin", email="berkay.yalin@outlook.com"}]
-description = "Library for accurate statistical calculations in Python"
+description = "Library for accurate statistical calculations using Python."
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [

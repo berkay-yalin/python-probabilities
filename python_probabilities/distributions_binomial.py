@@ -1,5 +1,6 @@
 from fractions import Fraction
-from copy import deepcopy
+# from copy import deepcopy
+# from operator import itemgetter
 
 from .utilities import *
 
@@ -19,50 +20,42 @@ class BinomialPD:
     raise TypeError("Input value for 'p' must be an integer or float")
 
   def calculate(self):
+    self.p = Fraction(str(self.p))
     part1 = nCr(self.n, self.r)
     part2 = (self.p ** self.r)
     part3 = (1 - self.p)
     part4 = (self.n - self.r)
-
-    self.abs = part1 * part2 * (part3 ** part4)
-    self.abs = Fraction(str(float( self.abs )))
+    self.val = part1 * part2 * (part3 ** part4)
 
   def configure_value(self):
-    self.abs = Fraction(str(float( self.abs )))
-
-    o_int = int(self.abs)
-    o_float = float(self.abs)
+    o_int = int(self.val)
+    o_float = float(self.val)
     o_str = str(o_float)
 
-    if isInteger(self.abs):
-      self.value = o_int
+    if isInteger(o_float):
+      self.dis = o_int
     elif 'e-' in o_str:
       value, index = o_str.split('e-')
       value = '{:.10f}'.format(float(value)).rstrip('0')
-      self.value = float( value + 'e-' + index )
+      self.dis = float( value + 'e-' + index )
     else:
-      self.value = float( '{0:.10f}'.format(o_float).rstrip('0') )
+      self.dis = float( '{0:.10f}'.format(o_float).rstrip('0') )
 
   def __init__(self, r, n, p):
     self.r = r
     self.n = n
     self.p = p
 
-    self.value = Fraction(0)
-    self.abs = Fraction(0)
+    self.dis = Fraction(0)
+    self.val = Fraction(0)
 
     self.validation()
-
-    self.r = int(r)
-    self.n = int(n)
-    self.p = Fraction(str(p))
-
     self.calculate()
     self.configure_value()
 
 class BinomialCD(BinomialPD):
   def calculate(self):
-    for i in range(self.r + 1):
+    for i in range(int(self.r) + 1):
       part1 = nCr(self.n, i)
       part2 = (self.p ** i)
       part3 = (1 - self.p)
@@ -70,7 +63,7 @@ class BinomialCD(BinomialPD):
 
       output = part1 * part2 * (part3 ** part4)
 
-      self.abs += output
+      self.val += output
 
   def __init__(self, r, n, p):
     BinomialPD.__init__(self, r, n, p)
@@ -91,29 +84,33 @@ class InvBinomialCD:
     raise TypeError("Input value for 'p' must be a number")
 
   def calculate(self):
-    bounds = {}
+    self.X = float(Fraction(str(self.X)))
+    self.n = int(self.n)
+
+    lower_bound = {}
+    upper_bound = {}
 
     for i in range(0, self.n + 1):
-      bounds['r_upper'] = i
-      bounds['X_upper'] = BinomialCD(i, self.n, self.p).value
+      if BinomialCD(i, self.n, self.p).dis == self.X:
+        return i
 
-      if bounds['X_upper'] > self.X:
+    for i in range(0, self.n + 1):
+      temp_X_value = BinomialCD(i, self.n, self.p).dis
+      if temp_X_value > self.X:
+        upper_bound['r_value'] = i
+        upper_bound['diff'] = abs( sub_f(self.X, temp_X_value) )
+        break
+    for i in reversed(range(0, self.n)):
+      temp_X_value = BinomialCD(i, self.n, self.p).dis
+      if temp_X_value < self.X:
+        lower_bound['r_value'] = i
+        lower_bound['diff'] = abs( sub_f(self.X, temp_X_value) )
         break
 
-    for i in reversed(range(0, self.n + 1)):
-      bounds['r_lower'] = i
-      bounds['X_lower'] = BinomialCD(i, self.n, self.p).value
-
-      if bounds['X_lower'] < self.X:
-        break
-
-    bounds['upper_difference'] = bounds['X_upper'] - self.X
-    bounds['lower_difference'] = self.X - bounds['X_lower']
-
-    if bounds['upper_difference'] < bounds['lower_difference']:
-       return bounds['r_lower']
-    if bounds['upper_difference'] > bounds['lower_difference']:
-      return bounds['r_upper']
+    if upper_bound['diff'] < lower_bound['diff']:
+      return upper_bound['r_value']
+    else:
+      return lower_bound['r_value']
 
   def __init__(self, X, n, p):
     self.X = X
@@ -121,8 +118,3 @@ class InvBinomialCD:
     self.p = p
 
     self.validation()
-
-    self.X = float(self.X)
-    self.n = int(n)
-
-    self.calculate()

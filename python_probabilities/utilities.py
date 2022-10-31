@@ -48,3 +48,5 @@ def nCr(n, r):
   numerator = factorial(n)
   denominator = factorial(r) * factorial(n - r)
   return int(numerator / denominator)
+
+def sub_f(a, b): return float( Fraction(str(a)) - Fraction(str(b)) )
